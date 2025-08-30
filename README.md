@@ -8,19 +8,22 @@ A real-time voting system built with Python, PostgreSQL, and Kafka. This project
 - Kafka producer for streaming voter data
 - Simple architecture for real-time voting simulation
 
-## Architecture Diagram
+
+## Updated Architecture
 
 ```
-+-------------------+      +-------------------+      +-------------------+
-|   Data Generator  | ---> |   PostgreSQL DB   | ---> |   Kafka Producer  |
-| (Candidates &     |      | (candidates,      |      | (voter data sent  |
-|  Voters via API)  |      |  voters, votes)   |      |  to Kafka topic)  |
-+-------------------+      +-------------------+      +-------------------+
++-------------------+      +-------------------+      +-------------------+      +-------------------+      +-------------------+
+|   Data Generator  | ---> |   PostgreSQL DB   | ---> |   Kafka Producer  | ---> |   Spark Streaming | ---> |   Streamlit App   |
+| (Candidates &     |      | (candidates,      |      | (voter/vote data  |      | (real-time vote   |      | (live dashboard   |
+|  Voters via API)  |      |  voters, votes)   |      |  sent to Kafka)   |      |  aggregation)     |      |  & analytics)     |
++-------------------+      +-------------------+      +-------------------+      +-------------------+      +-------------------+
 ```
 
-- **Data Generator**: Fetches random user data for voters and candidates.
+- **Data Generator**: Fetches random user data for voters/candidates.
 - **PostgreSQL DB**: Stores all entities and relationships.
-- **Kafka Producer**: Streams voter data to the `voters_topic` for downstream consumers.
+- **Kafka Producer**: Streams voter/vote data to Kafka topics.
+- **Spark Streaming**: Reads votes from Kafka, aggregates in real-time, checkpoints state for fault tolerance.
+- **Streamlit App**: Connects to Kafka and PostgreSQL, displays live voting stats and analytics.
 
 ## Prerequisites
 - Python 3.8+
@@ -42,15 +45,6 @@ cd RealTimeVotingSystem
 python3 -m venv venv
 source venv/bin/activate
 ```
-
-### 3. Install dependencies
-```sh
-pip install -r requirements.txt
-```
-
-### 4. Set up services using Docker Compose
-
-This project provides a `docker-compose.yml` to easily set up all required services:
 
 - **Zookeeper** (for Kafka coordination)
 - **Kafka Broker** (for message streaming)
@@ -86,16 +80,34 @@ docker-compose logs -f
 ### 5. (Optional) Manual setup
 If you prefer to run services manually, install and configure each service as per your environment.
 
-## Usage
 
-1. **Run the main script:**
-	```sh
-	python main.py
-	```
-	- This will create tables, generate candidates and voters, and stream voter data to Kafka.
+## Steps to Run the Streamlit App
 
-2. **Monitor Kafka topic:**
-	- Use Kafka consumer tools to view messages on the `voters_topic`.
+1. **Start all services** (Kafka, PostgreSQL, Zookeeper, Spark) using Docker Compose:
+   ```sh
+   docker-compose up
+   ```
+
+2. **Install Python dependencies**:
+   ```sh
+   pip install -r requirements.txt
+   ```
+
+3. **Run the main script** to generate data and stream to Kafka:
+   ```sh
+   python src/main.py
+   ```
+
+4. **Start Spark Streaming** to process votes:
+   ```sh
+   python src/spark-streaming.py
+   ```
+
+5. **Run the Streamlit dashboard**:
+   ```sh
+   streamlit run src/streamlit-app.py
+   ```
+   - This will launch a web dashboard showing live voting stats, candidate analytics, and visualizations.
 
 ## Project Structure
 ```
