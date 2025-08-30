@@ -112,3 +112,23 @@ If you prefer to run services manually, install and configure each service as pe
 
 ## License
 This project is licensed under the MIT License.
+
+# Test Coverage
+
+To check your test coverage, use the `coverage` tool:
+
+1. Run your tests with coverage:
+   ```sh
+   coverage run -m unittest discover tests
+   ```
+2. Generate a coverage report:
+   ```sh
+   coverage report -m
+   ```
+3. (Optional) Generate an HTML report:
+   ```sh
+   coverage html
+   # Open htmlcov/index.html in your browser
+   ```
+
+This will show you which lines of code are covered by your tests and which are not.
