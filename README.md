@@ -1,6 +1,6 @@
 # RealTimeVotingSystem
 
-A real-time voting system built with Python, PostgreSQL, and Kafka. This project simulates voter and candidate data, stores them in a database, and streams voter information to Kafka for real-time processing.
+A real-time voting system built with Python, PostgreSQL, Kafka and Spark. This project simulates voter and candidate data, stores them in a database, and streams voter information to Kafka for real-time processing.
 
 ## Features
 - Candidate and voter data generation using randomuser.me API
